@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { SearchPage } from "../pages/SearchPage";
 import { AddToCartPage } from "../pages/AddToCartPage";
 
@@ -10,17 +10,23 @@ test('Search item and verify quantity 0 shows error', async ({ page }) => {
   await searchPage.searchFor('computer');
   await searchPage.verifyResultsContain('computer');
 
-  // Open the first product result and navigate to the product page
   await searchPage.openFirstResult();
 
-  // Set quantity to 0 on the product page
   await addToCartPage.setQuantity(74, 0);
-
-  // Try to add to cart
   await addToCartPage.clickAddToCartOnProductPage();
 
-  // Verify error message
-  await addToCartPage.verifyQuantityError('Quantity must be positive');
+  try {
+    // Assertion wrapped in try/catch
+    await addToCartPage.verifyQuantityError('Quantity should be positive');
+  } catch (error) {
+    console.error("Quantity error verification failed:", error.message);
+
+    // Optional: capture screenshot for debugging
+    await page.screenshot({ path: 'quantity-error.png', fullPage: true });
+
+    // Fail gracefully with a controlled message
+    expect(false, `Handled error: ${error.message}`).toBe(true);
+  }
 
   await page.waitForTimeout(3000);
 });
