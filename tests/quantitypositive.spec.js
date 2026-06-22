@@ -16,15 +16,14 @@ test('Search item and verify quantity 0 shows error', async ({ page }) => {
   await addToCartPage.clickAddToCartOnProductPage();
 
   try {
-    // Assertion wrapped in try/catch
+    
     await addToCartPage.verifyQuantityError('Quantity should be positive');
   } catch (error) {
-    console.error("Quantity error verification failed:", error.message);
+    console.error(" Quantity error verification failed:", error.message);
 
-    // Optional: capture screenshot for debugging
+    
     await page.screenshot({ path: 'quantity-error.png', fullPage: true });
 
-    // Fail gracefully with a controlled message
     expect(false, `Handled error: ${error.message}`).toBe(true);
   }
 

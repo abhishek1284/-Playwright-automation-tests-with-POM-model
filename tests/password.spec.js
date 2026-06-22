@@ -4,7 +4,7 @@ import { PasswordPage } from "../pages/PasswordPage";
 test("Forgot password flow using POM", async ({ page }) => {
   const passwordPage = new PasswordPage(page);
 
-  // Step 1: Go to site
+  // Step 1: Go to signin page
   await passwordPage.goto();
 
   // Step 2: Open login page

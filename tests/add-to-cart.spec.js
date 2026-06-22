@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+ import { test } from "@playwright/test";
 import { SearchPage } from "../pages/SearchPage";
 import { AddToCartPage } from "../pages/AddToCartPage";
 

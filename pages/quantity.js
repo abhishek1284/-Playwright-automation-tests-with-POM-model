@@ -1,24 +1,34 @@
 import { expect } from "@playwright/test";
 
-export class QuantityPage {
+export class quantity{
   constructor(page) {
     this.page = page;
     this.addToCartButton = page.locator("//input[@value='Add to cart']");
-    this.quantityInput = page.locator('//*[@id="addtocart_2_EnteredQuantity"]');
-    this.errorMessage = page.locator('#bar-notification .content, .message-error.validation-summary-errors, .field-validation-error');
+    this.barNotification = page.locator('#bar-notification');
+    this.cartQuantity = page.locator('.cart-qty');
+    this.quantityInput = page.locator('input[id*="EnteredQuantity"]'); 
+    this.errorMessage = page.locator('.message-error.validation-summary-errors');
   }
 
-  async setQuantity(value) {
-    await this.quantityInput.scrollIntoViewIfNeeded();
-    await this.quantityInput.fill(value.toString());
+  async addToCartFromSearchOrProduct() {
+    await this.addToCartButton.first().click();
+    await this.page.waitForNavigation({ waitUntil: 'networkidle', timeout: 10000 }).catch(() => {});
+    await this.page.waitForTimeout(1000);
   }
 
-  async clickAddToCart() {
-    await this.addToCartButton.first().scrollIntoViewIfNeeded();
+  async clickAddToCartOnProductPage() {
     await this.addToCartButton.first().click();
   }
 
-  async verifyQuantityError(expectedText = 'Quantity should be positive') {
-    await expect(this.errorMessage.first()).toContainText(expectedText, { timeout: 5000 });
+  async setQuantity(value) {
+    await this.quantityInput.fill(value);
+  }
+
+  async verifyAddToCartSuccess(expectedCount = "(1)") {
+    await expect(this.cartQuantity).toContainText(expectedCount, { timeout: 5000 });
+  }
+
+  async verifyQuantityError() {
+    await expect(this.errorMessage).toContainText("Quantity should be positive", { timeout: 5000 });
   }
 }
