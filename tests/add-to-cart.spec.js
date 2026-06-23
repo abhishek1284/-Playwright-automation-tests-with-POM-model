@@ -1,23 +1,39 @@
- import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { SearchPage } from "../pages/SearchPage";
 import { AddToCartPage } from "../pages/AddToCartPage";
 
-test('Search item and verify add to cart button works using POM', async ({ page }) => {
+test("Search item and verify Add to Cart works", async ({ page }) => {
   const searchPage = new SearchPage(page);
   const addToCartPage = new AddToCartPage(page);
 
   await searchPage.goto();
-  await searchPage.searchFor('computer');
-  await searchPage.verifyResultsContain('computer');
 
-  // Click add to cart from search results (navigates to product page)
-  await addToCartPage.addToCartFromSearchOrProduct();
+  await searchPage.searchFor("computer");
+  await searchPage.verifyResultsContain("computer");
 
-  // Click add to cart on the product page
-  await addToCartPage.clickAddToCartOnProductPage();
+  await searchPage.openFirstResult();
 
-  // Verify the item was added to cart
+  const productId = 72;
+
+  await addToCartPage.setQuantity(productId, 1);
+  await addToCartPage.clickAddToCart(productId);
+
   await addToCartPage.verifyAddToCartSuccess();
+
+  // Wait for success notification
+  const successMessage = page.locator(".bar-notification.success");
+  await expect(successMessage).toBeVisible();
+
+  // Screenshot only the success result
+  await successMessage.screenshot({
+    path: "screenshots/add-to-cart-success-message.png",
+  });
+
+  // Optional full-page screenshot
+  await page.screenshot({
+    path: "screenshots/add-to-cart-full-page.png",
+    fullPage: true,
+  });
 
   await page.waitForTimeout(3000);
 });
