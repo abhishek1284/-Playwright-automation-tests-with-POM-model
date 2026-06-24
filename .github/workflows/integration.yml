@@ -12,14 +12,15 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 22.x]   # Removed 20.x (deprecated)
+        node-version: [18.x, 22.x]          # ✅ Supported Node versions
+        browser: [chromium, firefox, webkit] # ✅ Browser matrix
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4   # updated to v4 (latest)
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -30,21 +31,36 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
-        run: npx playwright test --reporter=html
+      - name: Run Playwright tests on ${{ matrix.browser }}
+        run: npx playwright test --browser=${{ matrix.browser }} --reporter=html --output=results/${{ matrix.browser }}
 
-      # Upload Playwright HTML report
-      - name: Upload Playwright report
+      - name: Upload per-browser results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.node-version }}-${{ matrix.browser }}
+          path: results/${{ matrix.browser }}
+
+  merge-report:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          path: results
+
+      - name: Merge Playwright reports
+        run: npx playwright merge-reports --reporter=html results/*
+
+      - name: Upload merged report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report
-
-      # Upload test results (traces, videos, screenshots)
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: test-results
