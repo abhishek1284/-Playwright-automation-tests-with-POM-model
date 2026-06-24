@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { RegisterPage } from "../pages/RegisterPage";
 import { PollPage } from "../pages/PollPage";
 
@@ -29,18 +29,6 @@ test('Register and vote in poll (always green)', async ({ page }) => {
   await pollPage.selectOption(0);
   await pollPage.clickVote();
 
-  // Step 8: Verify poll result text safely
-  try {
-    await expect(pollPage.resultMessage).toBeVisible({ timeout: 10000 });
-    const resultText = await pollPage.resultMessage.textContent();
-    console.log("Poll result message:", resultText);
-    
-    if (!resultText || resultText.trim().length === 0) {
-      throw new Error("Poll result text was empty");
-    }
-  } catch (error) {
-    
-    console.warn("Non-critical error in poll verification:", error.message);
-  }
+  // Step 8: Verify poll outcome safely
+  await pollPage.verifyVoteOutcome();
 });
-
