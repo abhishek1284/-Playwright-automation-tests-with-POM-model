@@ -11,16 +11,12 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        browser: [chromium, firefox, webkit]   # ✅ Browser matrix
-
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.x   # ✅ Explicit LTS version
+          node-version: 22.x   # ✅ Explicitly set to supported LTS
 
       - name: Install dependencies
         run: npm ci
@@ -28,40 +24,32 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests on ${{ matrix.browser }}
-        run: npx playwright test --browser=${{ matrix.browser }} --reporter=html --output=results/${{ matrix.browser }}
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=html
 
-      - name: Upload per-browser results
+      - name: Upload Playwright report artifact
         uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ !cancelled() }}
         with:
-          name: results-${{ matrix.browser }}
-          path: results/${{ matrix.browser }}
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
-  merge-report:
+  publish-report:
     needs: test
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ always() }}   # ensures report is published even if tests fail
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download all browser results
+      - name: Download Playwright report artifact
         uses: actions/download-artifact@v4
-        with:
-          path: results
-
-      - name: Merge Playwright reports
-        run: npx playwright merge-reports --reporter=html results/*
-
-      - name: Upload merged report
-        uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: playwright-report
           path: playwright-report
 
-      - name: Deploy merged report to GitHub Pages
+      - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
