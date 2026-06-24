@@ -12,14 +12,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [18.x, 22.x]   # Removed 20.x (deprecated)
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4   # updated to v4 (latest)
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -41,7 +41,7 @@ jobs:
           name: playwright-report
           path: playwright-report
 
-      #  Upload test results (traces, videos, screenshots)
+      # Upload test results (traces, videos, screenshots)
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
