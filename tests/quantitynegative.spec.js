@@ -70,7 +70,7 @@ test("Verify quantity 0 shows error message", async ({ page }) => {
 
     console.log("TEST PASSED ✔");
   } catch (error) {
-    console.log("TEST FAILED ❌", error);
+    console.log("TEST FAILED ", error);
 
     try {
       await page.screenshot({

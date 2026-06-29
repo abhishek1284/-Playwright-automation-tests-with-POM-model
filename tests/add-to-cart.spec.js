@@ -35,4 +35,4 @@ test("Search item and verify Add to Cart works", async ({ page }) => {
   });
 
   await page.waitForTimeout(3000);
-});
+}); 
