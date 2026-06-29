@@ -15,7 +15,7 @@ test("Forgot password flow with invalid email + screenshot", async ({ page }) =>
   try {
     await errorLocator.waitFor({ state: "visible", timeout: 5000 });
 
-    // Screenshot after error appears
+    
     await errorLocator.screenshot({ path: "screenshots/invalid-email-error.png" });
 
     const errorText = await errorLocator.innerText();
@@ -23,10 +23,8 @@ test("Forgot password flow with invalid email + screenshot", async ({ page }) =>
   } catch (err) {
     console.log(" Error message not found:", err.message);
 
-    // Fallback screenshot if locator fails
     await page.screenshot({ path: "screenshots/invalid-email-fallback.png", fullPage: true });
 
-    // Soft fail so report shows warning, not redline
     expect.soft(false, `Handled error: ${err.message}`);
   }
 

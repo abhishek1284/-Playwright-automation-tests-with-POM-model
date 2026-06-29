@@ -38,7 +38,7 @@ test.describe('Newsletter Subscription Scenarios', () => {
     await newsletterPage.subscribe(duplicateEmail);
     const msg = await newsletterPage.getResultMessage();
     if (msg && msg.length > 0) {
-      // Can verify if message appears
+     
     }
   });
 });

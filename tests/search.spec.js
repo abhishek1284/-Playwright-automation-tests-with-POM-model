@@ -10,7 +10,6 @@ test("Search functionality using POM", async ({ page }) => {
 
   await searchPage.verifyResultsContain("computer");
 
-  // Keep UI visible for debugging
   await page.waitForTimeout(3000);
 });
 

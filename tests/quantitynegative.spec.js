@@ -10,26 +10,24 @@ test("Verify quantity 0 shows error message", async ({ page }) => {
 
   const screenshotDir = path.resolve("screenshots");
 
-  // Create screenshots folder
+ 
   if (!fs.existsSync(screenshotDir)) {
     fs.mkdirSync(screenshotDir, { recursive: true });
   }
 
   try {
-    // Navigate to application
+  
     await searchPage.goto();
 
-    // Search product
     await searchPage.searchFor("computer");
     await searchPage.verifyResultsContain("computer");
 
-    // Open first product
+   
     await searchPage.openFirstResult();
 
-    // Quantity textbox
     const qtyBox = page.locator("input.qty-input");
 
-    // Enter quantity 0
+  
     await qtyBox.fill("0");
     await expect(qtyBox).toHaveValue("0");
 
@@ -38,13 +36,13 @@ test("Verify quantity 0 shows error message", async ({ page }) => {
       fullPage: true,
     });
 
-    // Click Add To Cart
+   
     await addToCartPage.clickAddToCart(72);
 
-    // Wait a moment for ajax notification
+   
     await page.waitForTimeout(2000);
 
-    // Validation message
+
     const validationMessage = page.getByText(
       "Quantity should be positive",
       { exact: false }

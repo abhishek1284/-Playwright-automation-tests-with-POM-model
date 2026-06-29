@@ -20,16 +20,15 @@ test("Search item and verify Add to Cart works", async ({ page }) => {
 
   await addToCartPage.verifyAddToCartSuccess();
 
-  // Wait for success notification
+
   const successMessage = page.locator(".bar-notification.success");
   await expect(successMessage).toBeVisible();
 
-  // Screenshot only the success result
+ 
   await successMessage.screenshot({
     path: "screenshots/add-to-cart-success-message.png",
   });
 
-  // Optional full-page screenshot
   await page.screenshot({
     path: "screenshots/add-to-cart-full-page.png",
     fullPage: true,

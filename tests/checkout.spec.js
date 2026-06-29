@@ -28,7 +28,7 @@
 //   await addToCartPage.goToShoppingCart();
 //   await addToCartPage.fillShippingAndCheckout("Nepal");
 
-//   // ✅ Billing step only
+//   //  Billing step only
 //   await addToCartPage.fillBillingAddress(
 //     "Abhishek",
 //     "Pradhan",
